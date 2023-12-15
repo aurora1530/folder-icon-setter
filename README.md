@@ -18,7 +18,7 @@ attrib +r ${dirPath} //Required to display icons
 ```
 
 
-The cause is unknown, but from desktop.ini
+The cause is unknown, but
 ```ini
 [.ShellClassInfo].
 IconResource=.*
