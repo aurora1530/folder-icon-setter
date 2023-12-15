@@ -42,5 +42,5 @@ npm install
 node index.js path
 ```
 
-ライセンス
+#### LICENSE
 MIT
