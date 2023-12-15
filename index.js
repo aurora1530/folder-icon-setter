@@ -20,7 +20,7 @@ function convertRelativeToAbsolutePath(dirPath) {
  * @param {string} dirPath - The path of the directory to set the folder icon for.
  * @returns {Promise<void>} - A Promise that resolves when the operation is complete.
  */
-async function main(dirPath) {
+async function setFolderIcon(dirPath) {
   console.log(`start setFolderIcon for ${dirPath}`)
   dirPath = convertRelativeToAbsolutePath(dirPath)
 
@@ -54,13 +54,13 @@ async function main(dirPath) {
   return;
 }
 
-async function callByCli() {
+async function main() {
   const dirPaths = process.argv.slice(2)
   for (const dirPath of dirPaths) {
     if (fs.statSync(dirPath).isDirectory()) {
-      await main(dirPath)
+      await setFolderIcon(dirPath)
     }
   }
 }
 
-callByCli()
+main()
