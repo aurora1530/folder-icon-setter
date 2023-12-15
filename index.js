@@ -26,6 +26,10 @@ async function main(dirPath) {
 
   const iconDirPath = makeIconDir(dirPath)
   const iconTargetFileName = getFirstFileNameOfSortedDir(dirPath)
+  if (!iconTargetFileName) {
+    console.log(`${dirPath} has no image file.`)
+    return
+  }
   const iconTargetFilePath = `${dirPath}/${iconTargetFileName}`
   const copiedIconTargetFilePath =
     /\.png$/i.test(iconTargetFileName)
@@ -50,9 +54,13 @@ async function main(dirPath) {
   return;
 }
 
-const dirPaths = process.argv.slice(2)
-dirPaths.forEach(dirPath => {
-  if (fs.statSync(dirPath).isDirectory()) {
-    main(dirPath)
+async function callByCli() {
+  const dirPaths = process.argv.slice(2)
+  for (const dirPath of dirPaths) {
+    if (fs.statSync(dirPath).isDirectory()) {
+      await main(dirPath)
+    }
   }
-})
+}
+
+callByCli()
