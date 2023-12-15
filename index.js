@@ -44,15 +44,15 @@ async function main(dirPath) {
   await execCommand(`attrib +s +h "${desktopIniPath}"`)
   await execCommand(`attrib +r "${dirPath}"`)//Required to display icons
 
-  //Required to update icon
-  await execCommand(`attrib +s "${dirPath}"`)
-  await execCommand(`attrib -s "${dirPath}"`)
-
   fs.rmSync(copiedIconTargetFilePath)
   resizedPngPathArray.forEach(pngPath => fs.rmSync(pngPath))
   console.log(`end setFolderIcon for ${dirPath}`)
   return;
 }
 
-const dirPath = process.argv[2]
-main(dirPath)
+const dirPaths = process.argv.slice(2)
+dirPaths.forEach(dirPath => {
+  if (fs.statSync(dirPath).isDirectory()) {
+    main(dirPath)
+  }
+})

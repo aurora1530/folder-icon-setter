@@ -17,10 +17,6 @@ This is to reflect the changes to `desktop.ini`.
 attrib -s -h ${dirPath}
 attrib +s +h ${desktopIniPath}
 attrib +r ${dirPath} //Required to display icons
-
-//Required to update icon
-attrib +s ${dirPath}
-attrib -s ${dirPath}
 ```
 
 
@@ -45,6 +41,12 @@ npm install
 4. Run the script. Specify the path of the directory you want to set the icon for as an argument.
 ```bash
 node index.js path
+```
+
+You can also use wildcards in the directory argument for `node index.js`. This allows you to specify multiple directories at once. For example:
+
+```bash
+node index.js dir1/* dir2/* dir3/*
 ```
 
 #### LICENSE
