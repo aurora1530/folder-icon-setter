@@ -34,7 +34,7 @@ async function main(dirPath) {
 
   await convertImgToSquare(copiedIconTargetFilePath)
   const resizedPngPathArray = await createResizedSquareImages(copiedIconTargetFilePath, iconDirPath)
-  const iconPath = iconDirPath + '\\' + path.basename(copiedIconTargetFilePath).replace(/\.png$/i, '.ico')
+  const iconPath = iconDirPath + '\\' + 'icon.ico'
   await createIcoFromPngImgs(resizedPngPathArray, iconPath)
 
   const desktopIniPath = `${dirPath}/desktop.ini`
