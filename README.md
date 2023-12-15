@@ -12,12 +12,26 @@ If there is no image in the directory to use as an icon, the script does nothing
 Also, due to Windows specifications, the contents of `desktop.ini` may not be reflected (i.e., the folder icon does not change). The cause of this is unknown.
 
 Internally, the following is executed at the end.
-This is to reflect the changes to `desktop.ini`.
+This is required to display icons.
 ```bash
-attrib -s -h ${dirPath}
-attrib +s +h ${desktopIniPath}
 attrib +r ${dirPath} //Required to display icons
 ```
+
+
+The cause is unknown, but from desktop.ini
+```ini
+[.ShellClassInfo].
+IconResource=.*
+```
+may be erased by itself from desktop.ini.
+
+If so,please run it again.
+
+### If ICON does not change
+try the following steps.
+1. open the "Properties" of the folder
+2. click on "Customize" from the tab
+3. Make no changes and click "OK"
 
 
 ## Usage
