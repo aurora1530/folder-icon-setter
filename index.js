@@ -21,7 +21,6 @@ function convertRelativeToAbsolutePath(dirPath) {
  * @returns {Promise<void>} - A Promise that resolves when the operation is complete.
  */
 async function setFolderIcon(dirPath) {
-  console.log(`start setFolderIcon for ${dirPath}`)
   dirPath = convertRelativeToAbsolutePath(dirPath)
 
   const iconDirPath = makeIconDir(dirPath)
@@ -42,6 +41,7 @@ async function setFolderIcon(dirPath) {
   await createIcoFromPngImgs(resizedPngPathArray, iconPath)
 
   const desktopIniPath = `${dirPath}/desktop.ini`
+  await execCommand(`attrib -r "${dirPath}"`)
   await execCommand(`attrib -s -h "${desktopIniPath}"`)
   updateIconResourceOfDesktopIni(desktopIniPath, iconPath)
   await execCommand(`attrib -s -h "${dirPath}"`)
@@ -50,7 +50,6 @@ async function setFolderIcon(dirPath) {
 
   fs.rmSync(copiedIconTargetFilePath)
   resizedPngPathArray.forEach(pngPath => fs.rmSync(pngPath))
-  console.log(`end setFolderIcon for ${dirPath}`)
   return;
 }
 
@@ -58,7 +57,9 @@ async function main() {
   const dirPaths = process.argv.slice(2)
   for (const dirPath of dirPaths) {
     if (fs.statSync(dirPath).isDirectory()) {
+      console.log(`start setFolderIcon for ${dirPath}`)
       await setFolderIcon(dirPath)
+      console.log(`end setFolderIcon for ${dirPath}`)
     }
   }
 }
