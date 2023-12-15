@@ -1,8 +1,8 @@
 const fs = require('node:fs')
 const path = require('path')
 const { makeIconDir, getFirstFileNameOfSortedDir, copyFile } = require('./lib/fileOperations.js')
-const { convertJpgToPng, makeSquareImg, resizePng } = require('./lib/imageOperations.js')
-const { convertPngToIco, updateIconResourceOfDesktopIni } = require('./lib/iconOperations.js')
+const { copyJpgAsPng, convertImgToSquare, createResizedSquareImages } = require('./lib/imageOperations.js')
+const { createIcoFromPngImgs, updateIconResourceOfDesktopIni } = require('./lib/iconOperations.js')
 const { execCommand } = require('./lib/commandOperations.js')
 
 /**
@@ -29,17 +29,20 @@ async function main(dirPath) {
   const copiedIconTargetFilePath =
     /\.png$/i.test(iconTargetFileName)
       ? copyFile(iconTargetFilePath, `${iconDirPath}\\${iconTargetFileName}`)
-      : await convertJpgToPng(iconTargetFilePath, iconDirPath)
+      : await copyJpgAsPng(iconTargetFilePath, iconDirPath)
 
-  await makeSquareImg(copiedIconTargetFilePath)
-  const resizedPngPathArray = await resizePng(copiedIconTargetFilePath, iconDirPath)
+  await convertImgToSquare(copiedIconTargetFilePath)
+  const resizedPngPathArray = await createResizedSquareImages(copiedIconTargetFilePath, iconDirPath)
   const iconPath = iconDirPath + '\\' + path.basename(copiedIconTargetFilePath).replace(/\.png$/i, '.ico')
-  await convertPngToIco(resizedPngPathArray, iconPath)
+  await createIcoFromPngImgs(resizedPngPathArray, iconPath)
+
   const desktopIniPath = `${dirPath}/desktop.ini`
+  await execCommand(`attrib -s -h "${desktopIniPath}"`)
   updateIconResourceOfDesktopIni(desktopIniPath, iconPath)
   await execCommand(`attrib -s -h "${dirPath}"`)
   await execCommand(`attrib +s +h "${desktopIniPath}"`)
   await execCommand(`attrib +r "${dirPath}"`)
+
   fs.rmSync(copiedIconTargetFilePath)
   resizedPngPathArray.forEach(pngPath => fs.rmSync(pngPath))
   return;

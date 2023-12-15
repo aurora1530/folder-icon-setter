@@ -9,8 +9,6 @@ This script uses the first PNG or JPG/JPEG file in the specified directory.
 Files are sorted in alphabetical order, and the first file is selected.
 If there is no image in the directory to use as an icon, the script does nothing.
 
-If `desktop.ini` exists, it is saved as `desktop.ini.bak`, and a new `desktop.ini` is saved.
-
 Also, due to Windows specifications, the contents of `desktop.ini` may not be reflected (i.e., the folder icon does not change), or `desktop.ini` may be unnaturally deleted. The cause of this is unknown.
 
 Internally, the following is executed at the end. This is to reflect the changes to `desktop.ini`.
