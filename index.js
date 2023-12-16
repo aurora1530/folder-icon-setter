@@ -14,7 +14,7 @@ function convertRelativeToAbsolutePath(dirPath) {
   return dirPath
 }
 
-async function processIconTargetFile(dirPath, iconTargetFileName, iconDirPath) {
+async function createCopiedIconTargetImg(dirPath, iconTargetFileName, iconDirPath) {
   const iconTargetFilePath = `${dirPath}/${iconTargetFileName}`;
   let copiedIconTargetFilePath;
 
@@ -28,7 +28,7 @@ async function processIconTargetFile(dirPath, iconTargetFileName, iconDirPath) {
   return copiedIconTargetFilePath;
 }
 
-async function createIcon(dirPath, copiedIconTargetFilePath, iconDirPath) {
+async function createIcon(copiedIconTargetFilePath, iconDirPath) {
   const resizedPngPathArray = await createResizedSquareImages(copiedIconTargetFilePath, iconDirPath);
   const iconPath = iconDirPath + '\\' + 'icon.ico';
   await createIcoFromPngImgs(resizedPngPathArray, iconPath);
@@ -51,8 +51,8 @@ async function setFolderIcon(dirPath) {
   if (!iconTargetFileName) throw new Error(`${dirPath} has no image file.`);
   const iconDirPath = makeIconDir(dirPath);
 
-  const copiedIconTargetFilePath = await processIconTargetFile(dirPath, iconTargetFileName, iconDirPath);
-  const { iconPath, resizedPngPathArray } = await createIcon(dirPath, copiedIconTargetFilePath, iconDirPath);
+  const copiedIconTargetFilePath = await createCopiedIconTargetImg(dirPath, iconTargetFileName, iconDirPath);
+  const { iconPath, resizedPngPathArray } = await createIcon(copiedIconTargetFilePath, iconDirPath);
 
   const desktopIniPath = `${dirPath}/desktop.ini`;
   await updateFolderIcon(dirPath, desktopIniPath, iconPath);
