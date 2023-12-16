@@ -14,41 +14,51 @@ function convertRelativeToAbsolutePath(dirPath) {
   return dirPath
 }
 
-/**
- * Main function that performs the setFolderIcon operation.
- *
- * @param {string} dirPath - The path of the directory to set the folder icon for.
- * @returns {Promise<void>} - A Promise that resolves when the operation is complete.
- */
+async function processIconTargetFile(dirPath, iconTargetFileName, iconDirPath) {
+  const iconTargetFilePath = `${dirPath}/${iconTargetFileName}`;
+  let copiedIconTargetFilePath;
+
+  if (/\.png$/i.test(iconTargetFileName)) {
+    copiedIconTargetFilePath = copyFile(iconTargetFilePath, `${iconDirPath}\\${iconTargetFileName}`);
+  } else {
+    copiedIconTargetFilePath = await copyJpgAsPng(iconTargetFilePath, iconDirPath);
+  }
+
+  await convertImgToSquare(copiedIconTargetFilePath);
+  return copiedIconTargetFilePath;
+}
+
+async function createIcon(dirPath, copiedIconTargetFilePath, iconDirPath) {
+  const resizedPngPathArray = await createResizedSquareImages(copiedIconTargetFilePath, iconDirPath);
+  const iconPath = iconDirPath + '\\' + 'icon.ico';
+  await createIcoFromPngImgs(resizedPngPathArray, iconPath);
+  return { iconPath, resizedPngPathArray };
+}
+
+async function updateFolderIcon(dirPath, desktopIniPath, iconPath) {
+  await execCommand(`attrib -r "${dirPath}"`);
+  await execCommand(`attrib -s -h "${desktopIniPath}"`);
+  updateIconResourceOfDesktopIni(desktopIniPath, iconPath);
+  await execCommand(`attrib -s -h "${dirPath}"`);
+  await execCommand(`attrib +s +h "${desktopIniPath}"`);
+  await execCommand(`attrib +r "${dirPath}"`); //Required to display icons
+}
+
 async function setFolderIcon(dirPath) {
-  dirPath = convertRelativeToAbsolutePath(dirPath)
+  dirPath = convertRelativeToAbsolutePath(dirPath);
 
-  const iconTargetFileName = getFirstFileNameOfSortedDir(dirPath)
-  if (!iconTargetFileName) new Error(`${dirPath} has no image file.`)
-  const iconDirPath = makeIconDir(dirPath)
+  const iconTargetFileName = getFirstFileNameOfSortedDir(dirPath);
+  if (!iconTargetFileName) throw new Error(`${dirPath} has no image file.`);
+  const iconDirPath = makeIconDir(dirPath);
 
-  const iconTargetFilePath = `${dirPath}/${iconTargetFileName}`
-  const copiedIconTargetFilePath =
-    /\.png$/i.test(iconTargetFileName)
-      ? copyFile(iconTargetFilePath, `${iconDirPath}\\${iconTargetFileName}`)
-      : await copyJpgAsPng(iconTargetFilePath, iconDirPath)
+  const copiedIconTargetFilePath = await processIconTargetFile(dirPath, iconTargetFileName, iconDirPath);
+  const { iconPath, resizedPngPathArray } = await createIcon(dirPath, copiedIconTargetFilePath, iconDirPath);
 
-  await convertImgToSquare(copiedIconTargetFilePath)
-  const resizedPngPathArray = await createResizedSquareImages(copiedIconTargetFilePath, iconDirPath)
-  const iconPath = iconDirPath + '\\' + 'icon.ico'
-  await createIcoFromPngImgs(resizedPngPathArray, iconPath)
+  const desktopIniPath = `${dirPath}/desktop.ini`;
+  await updateFolderIcon(dirPath, desktopIniPath, iconPath);
 
-  const desktopIniPath = `${dirPath}/desktop.ini`
-  await execCommand(`attrib -r "${dirPath}"`)
-  await execCommand(`attrib -s -h "${desktopIniPath}"`)
-  updateIconResourceOfDesktopIni(desktopIniPath, iconPath)
-  await execCommand(`attrib -s -h "${dirPath}"`)
-  await execCommand(`attrib +s +h "${desktopIniPath}"`)
-  await execCommand(`attrib +r "${dirPath}"`)//Required to display icons
-
-  fs.rmSync(copiedIconTargetFilePath)
-  resizedPngPathArray.forEach(pngPath => fs.rmSync(pngPath))
-  return;
+  fs.rmSync(copiedIconTargetFilePath);
+  resizedPngPathArray.forEach(pngPath => fs.rmSync(pngPath));
 }
 
 async function main() {
