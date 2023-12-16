@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { makeIconDir, getFirstFileNameOfSortedDir, copyFile } from './lib/fileOperations';
-import { copyJpgAsPng, convertImgToSquare, createResizedSquareImages } from './lib/imageOperations';
-import { createIcoFromPngImgs, updateIconResourceOfDesktopIni } from './lib/iconOperations';
-import { execCommand } from './lib/commandOperations';
+import { makeIconDir, getFirstFileNameOfSortedDir, copyFile } from './components/fileOperations';
+import { copyJpgAsPng, convertImgToSquare, createResizedSquareImages } from './components/imageOperations';
+import { createIcoFromPngImgs, updateIconResourceOfDesktopIni } from './components/iconOperations';
+import { execCommand } from './components/commandOperations';
 
 function convertRelativeToAbsolutePath(dirPath: string): string {
   if (dirPath.startsWith('./')) dirPath = dirPath.replace('./', '')
