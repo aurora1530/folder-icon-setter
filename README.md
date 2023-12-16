@@ -52,15 +52,20 @@ cd folder-icon-setter
 npm install
 ```
 
-4. Run the script. Specify the path of the directory you want to set the icon for as an argument.
+4. Compile the TypeScript files.
 ```bash
-node index.js path
+npm run compile
+```
+
+5. Run the script. Specify the path of the directory you want to set the icon for as an argument.
+```bash
+npm run setIcon path
 ```
 
 You can also use wildcards in the directory argument for `node index.js`. This allows you to specify multiple directories at once. For example:
 
 ```bash
-node index.js dir1/* dir2/* dir3/*
+npm run setIcon dir1/* dir2/* dir3/*
 ```
 
 #### LICENSE

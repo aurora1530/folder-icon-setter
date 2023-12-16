@@ -1,5 +1,5 @@
-const Jimp = require('jimp');
-const path = require('path')
+import Jimp from 'jimp'
+import path from 'path'
 
 /**
  * Converts a JPG image to PNG format.
@@ -7,7 +7,7 @@ const path = require('path')
  * @param {string} outputDirPath - The path of the output directory.
  * @returns {Promise<string>} The path of the converted PNG image file.
  */
-async function copyJpgAsPng(jpgPath, outputDirPath) {
+async function copyJpgAsPng(jpgPath: string, outputDirPath: string): Promise<string> {
   const img = await Jimp.read(jpgPath)
   const outputFilename = path.basename(jpgPath).replace(/\.jpe?g$/i, '.png')
   const pngPath = outputDirPath + '\\' + outputFilename
@@ -20,7 +20,7 @@ async function copyJpgAsPng(jpgPath, outputDirPath) {
  * @param {string} pngPath - The path to the PNG image file.
  * @returns {Promise<void>} - A promise that resolves when the square image is created.
  */
-async function convertImgToSquare(pngPath) {
+async function convertImgToSquare(pngPath: string): Promise<void> {
   const image = await Jimp.read(pngPath);
   const size = Math.max(image.bitmap.width, image.bitmap.height);
   const newImage = new Jimp(size, size, 0x000000ff);
@@ -36,7 +36,7 @@ async function convertImgToSquare(pngPath) {
  * @param {String} iconDirPath
  * @returns {Promise<String[]>} - An array of paths to resized PNG images.
  */
-async function createResizedSquareImages(pngPath, iconDirPath) {
+async function createResizedSquareImages(pngPath: string, iconDirPath: string): Promise<string[]> {
   const sizeArray = [512, 256, 128, 96, 64, 48, 32, 24, 16]
   const resizedPngPathArray = []
   for (const size of sizeArray) {
@@ -49,4 +49,4 @@ async function createResizedSquareImages(pngPath, iconDirPath) {
   return resizedPngPathArray
 }
 
-module.exports = { copyJpgAsPng, convertImgToSquare, createResizedSquareImages }
+export { copyJpgAsPng, convertImgToSquare, createResizedSquareImages }

@@ -1,12 +1,12 @@
-const pngToIco = require('png-to-ico')
-const fs = require('node:fs')
+import pngToIco from 'png-to-ico'
+import fs from 'fs'
 
 /**
  * Converts a PNG image to an ICO file.
  * @param {string[]} resizedPngPathArray - An array of paths to resized PNG images.
  * @param {string} iconPath - The path where the ICO file will be saved.
  */
-async function createIcoFromPngImgs(resizedPngPathArray, iconPath) {
+async function createIcoFromPngImgs(resizedPngPathArray: string[], iconPath: string): Promise<void> {
   await pngToIco(resizedPngPathArray)
     .then(buf => {
       fs.writeFileSync(iconPath, buf)
@@ -17,7 +17,7 @@ async function createIcoFromPngImgs(resizedPngPathArray, iconPath) {
   return
 }
 
-function changePathToWindowsStyle(path) {
+function changePathToWindowsStyle(path: string): string {
   return path.replace(/\//g, '\\')
 }
 
@@ -27,7 +27,7 @@ function changePathToWindowsStyle(path) {
  * @param {string} iconPath - The path to the icon file.
  * @returns {void}
  */
-function updateIconResourceOfDesktopIni(iniPath, iconPath) {
+function updateIconResourceOfDesktopIni(iniPath: string, iconPath: string): void {
   iconPath = changePathToWindowsStyle(iconPath)
   if (!fs.existsSync(iniPath)) {
     const iniContent =
@@ -57,4 +57,4 @@ FolderType=Generic
   }
 }
 
-module.exports = { createIcoFromPngImgs, updateIconResourceOfDesktopIni }
+export { createIcoFromPngImgs, updateIconResourceOfDesktopIni }

@@ -1,20 +1,17 @@
-const fs = require('node:fs')
-const path = require('path')
-const { makeIconDir, getFirstFileNameOfSortedDir, copyFile } = require('./lib/fileOperations.js')
-const { copyJpgAsPng, convertImgToSquare, createResizedSquareImages } = require('./lib/imageOperations.js')
-const { createIcoFromPngImgs, updateIconResourceOfDesktopIni } = require('./lib/iconOperations.js')
-const { execCommand } = require('./lib/commandOperations.js')
+import fs from 'fs';
+import path from 'path';
+import { makeIconDir, getFirstFileNameOfSortedDir, copyFile } from './lib/fileOperations';
+import { copyJpgAsPng, convertImgToSquare, createResizedSquareImages } from './lib/imageOperations';
+import { createIcoFromPngImgs, updateIconResourceOfDesktopIni } from './lib/iconOperations';
+import { execCommand } from './lib/commandOperations';
 
-/**
- * @param {String} dirPath
- */
-function convertRelativeToAbsolutePath(dirPath) {
+function convertRelativeToAbsolutePath(dirPath: string): string {
   if (dirPath.startsWith('./')) dirPath = dirPath.replace('./', '')
   if (!path.isAbsolute(dirPath)) dirPath = path.resolve(dirPath)
   return dirPath
 }
 
-async function createCopiedIconTargetImg(dirPath, iconTargetFileName, iconDirPath) {
+async function createCopiedIconTargetImg(dirPath: string, iconTargetFileName: string, iconDirPath: string): Promise<string> {
   const iconTargetFilePath = `${dirPath}/${iconTargetFileName}`;
   let copiedIconTargetFilePath;
 
@@ -28,14 +25,14 @@ async function createCopiedIconTargetImg(dirPath, iconTargetFileName, iconDirPat
   return copiedIconTargetFilePath;
 }
 
-async function createIcon(copiedIconTargetFilePath, iconDirPath) {
+async function createIcon(copiedIconTargetFilePath: string, iconDirPath: string): Promise<{ iconPath: string, resizedPngPathArray: string[] }> {
   const resizedPngPathArray = await createResizedSquareImages(copiedIconTargetFilePath, iconDirPath);
   const iconPath = iconDirPath + '\\' + 'icon.ico';
   await createIcoFromPngImgs(resizedPngPathArray, iconPath);
   return { iconPath, resizedPngPathArray };
 }
 
-async function updateFolderIcon(dirPath, desktopIniPath, iconPath) {
+async function updateFolderIcon(dirPath: string, desktopIniPath: string, iconPath: string): Promise<void> {
   await execCommand(`attrib -r "${dirPath}"`);
   await execCommand(`attrib -s -h "${desktopIniPath}"`);
   updateIconResourceOfDesktopIni(desktopIniPath, iconPath);
@@ -44,7 +41,7 @@ async function updateFolderIcon(dirPath, desktopIniPath, iconPath) {
   await execCommand(`attrib +r "${dirPath}"`); //Required to display icons
 }
 
-async function setFolderIcon(dirPath) {
+async function setFolderIcon(dirPath: string): Promise<void> {
   dirPath = convertRelativeToAbsolutePath(dirPath);
 
   const iconTargetFileName = getFirstFileNameOfSortedDir(dirPath);
@@ -61,7 +58,7 @@ async function setFolderIcon(dirPath) {
   resizedPngPathArray.forEach(pngPath => fs.rmSync(pngPath));
 }
 
-async function main() {
+async function main(): Promise<void> {
   const dirPaths = process.argv.slice(2)
   for (const dirPath of dirPaths) {
     try {
@@ -70,7 +67,7 @@ async function main() {
         await setFolderIcon(dirPath)
         console.log(`end setFolderIcon for ${dirPath}`)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Failed to process directory ${dirPath}\nError: ${error.message}`)
     }
   }
