@@ -23,12 +23,10 @@ function convertRelativeToAbsolutePath(dirPath) {
 async function setFolderIcon(dirPath) {
   dirPath = convertRelativeToAbsolutePath(dirPath)
 
-  const iconDirPath = makeIconDir(dirPath)
   const iconTargetFileName = getFirstFileNameOfSortedDir(dirPath)
-  if (!iconTargetFileName) {
-    console.log(`${dirPath} has no image file.`)
-    return
-  }
+  if (!iconTargetFileName) new Error(`${dirPath} has no image file.`)
+  const iconDirPath = makeIconDir(dirPath)
+
   const iconTargetFilePath = `${dirPath}/${iconTargetFileName}`
   const copiedIconTargetFilePath =
     /\.png$/i.test(iconTargetFileName)
@@ -56,10 +54,14 @@ async function setFolderIcon(dirPath) {
 async function main() {
   const dirPaths = process.argv.slice(2)
   for (const dirPath of dirPaths) {
-    if (fs.statSync(dirPath).isDirectory()) {
-      console.log(`start setFolderIcon for ${dirPath}`)
-      await setFolderIcon(dirPath)
-      console.log(`end setFolderIcon for ${dirPath}`)
+    try {
+      if (fs.statSync(dirPath).isDirectory()) {
+        console.log(`start setFolderIcon for ${dirPath}`)
+        await setFolderIcon(dirPath)
+        console.log(`end setFolderIcon for ${dirPath}`)
+      }
+    } catch (error) {
+      console.error(`Failed to process directory ${dirPath}\nError: ${error.message}`)
     }
   }
 }
