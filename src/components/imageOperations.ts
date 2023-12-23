@@ -1,5 +1,5 @@
-import Jimp from 'jimp'
-import path from 'path'
+import Jimp from "jimp";
+import path from "path";
 
 /**
  * Converts a JPG image to PNG format.
@@ -7,12 +7,15 @@ import path from 'path'
  * @param {string} outputDirPath - The path of the output directory.
  * @returns {Promise<string>} The path of the converted PNG image file.
  */
-async function copyJpgAsPng(jpgPath: string, outputDirPath: string): Promise<string> {
-  const img = await Jimp.read(jpgPath)
-  const outputFilename = path.basename(jpgPath).replace(/\.jpe?g$/i, '.png')
-  const pngPath = outputDirPath + '\\' + outputFilename
-  await img.writeAsync(pngPath)
-  return pngPath
+async function copyJpgAsPng(
+  jpgPath: string,
+  outputDirPath: string
+): Promise<string> {
+  const img = await Jimp.read(jpgPath);
+  const outputFilename = path.basename(jpgPath).replace(/\.jpe?g$/i, ".png");
+  const pngPath = outputDirPath + "\\" + outputFilename;
+  await img.writeAsync(pngPath);
+  return pngPath;
 }
 
 /**
@@ -36,17 +39,20 @@ async function convertImgToSquare(pngPath: string): Promise<void> {
  * @param {String} iconDirPath
  * @returns {Promise<String[]>} - An array of paths to resized PNG images.
  */
-async function createResizedSquareImages(pngPath: string, iconDirPath: string): Promise<string[]> {
-  const sizeArray = [512, 256, 128, 96, 64, 48, 32, 24, 16]
-  const resizedPngPathArray = []
+async function createResizedSquareImages(
+  pngPath: string,
+  iconDirPath: string
+): Promise<string[]> {
+  const sizeArray = [512, 256, 128, 96, 64, 48, 32, 24, 16];
+  const resizedPngPathArray = [];
   for (const size of sizeArray) {
     const image = await Jimp.read(pngPath);
     image.resize(size, size, Jimp.RESIZE_NEAREST_NEIGHBOR);
-    const resizedPngPath = `${iconDirPath}\\${size}x${size}.png`
+    const resizedPngPath = `${iconDirPath}\\${size}x${size}.png`;
     await image.writeAsync(resizedPngPath);
-    resizedPngPathArray.push(resizedPngPath)
+    resizedPngPathArray.push(resizedPngPath);
   }
-  return resizedPngPathArray
+  return resizedPngPathArray;
 }
 
-export { copyJpgAsPng, convertImgToSquare, createResizedSquareImages }
+export { copyJpgAsPng, convertImgToSquare, createResizedSquareImages };

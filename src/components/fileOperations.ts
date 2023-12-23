@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from "fs";
 
 /**
  * Creates a directory named 'icon' within the specified directory path.
@@ -6,11 +6,10 @@ import fs from 'fs';
  * @returns {string} - The path of the created 'icon' directory.
  */
 function makeIconDir(dirPath: string): string {
-  const iconDirPath = `${dirPath}\\icon`
-  if (!fs.existsSync(iconDirPath)) fs.mkdirSync(iconDirPath)
-  return iconDirPath
+  const iconDirPath = `${dirPath}\\icon`;
+  if (!fs.existsSync(iconDirPath)) fs.mkdirSync(iconDirPath);
+  return iconDirPath;
 }
-
 
 /**
  * Returns the name of the first file in the sorted directory.
@@ -19,8 +18,9 @@ function makeIconDir(dirPath: string): string {
  * @returns {string} The name of the first file in the sorted directory.
  */
 function getFirstFileNameOfSortedDir(dirPath: string): string {
-  const files = fs.readdirSync(dirPath)
-    .filter(file => /\.(png|jpe?g)$/i.test(file))
+  const files = fs
+    .readdirSync(dirPath)
+    .filter((file) => /\.(png|jpe?g)$/i.test(file))
     .sort();
   return files[0];
 }
@@ -33,8 +33,8 @@ function getFirstFileNameOfSortedDir(dirPath: string): string {
  * @returns {String}
  */
 function copyFile(srcFilePath: string, destFilePath: string): string {
-  fs.copyFileSync(srcFilePath, destFilePath)
-  return destFilePath
+  fs.copyFileSync(srcFilePath, destFilePath);
+  return destFilePath;
 }
 
-export { makeIconDir, getFirstFileNameOfSortedDir, copyFile }
+export { makeIconDir, getFirstFileNameOfSortedDir, copyFile };
