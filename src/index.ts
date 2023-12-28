@@ -1,23 +1,23 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 import {
   makeIconDir,
   getFirstFileNameOfSortedDir,
   copyFile,
-} from "./components/fileOperations";
+} from './components/fileOperations';
 import {
   copyJpgAsPng,
   convertImgToSquare,
   createResizedSquareImages,
-} from "./components/imageOperations";
+} from './components/imageOperations';
 import {
   createIcoFromPngImgs,
   updateIconResourceOfDesktopIni,
-} from "./components/iconOperations";
-import { execCommand } from "./components/commandOperations";
+} from './components/iconOperations';
+import { execCommand } from './components/commandOperations';
 
 function convertRelativeToAbsolutePath(dirPath: string): string {
-  if (dirPath.startsWith("./")) dirPath = dirPath.replace("./", "");
+  if (dirPath.startsWith('./')) dirPath = dirPath.replace('./', '');
   if (!path.isAbsolute(dirPath)) dirPath = path.resolve(dirPath);
   return dirPath;
 }
@@ -36,10 +36,7 @@ async function createCopiedIconTargetImg(
       `${iconDirPath}\\${iconTargetFileName}`
     );
   } else {
-    copiedIconTargetFilePath = await copyJpgAsPng(
-      iconTargetFilePath,
-      iconDirPath
-    );
+    copiedIconTargetFilePath = await copyJpgAsPng(iconTargetFilePath, iconDirPath);
   }
 
   await convertImgToSquare(copiedIconTargetFilePath);
@@ -54,7 +51,7 @@ async function createIcon(
     copiedIconTargetFilePath,
     iconDirPath
   );
-  const iconPath = iconDirPath + "\\" + "icon.ico";
+  const iconPath = iconDirPath + '\\' + 'icon.ico';
   await createIcoFromPngImgs(resizedPngPathArray, iconPath);
   return { iconPath, resizedPngPathArray };
 }
@@ -98,19 +95,31 @@ async function setFolderIcon(dirPath: string): Promise<void> {
 
 async function main(): Promise<void> {
   const dirPaths = process.argv.slice(2);
-  for (const dirPath of dirPaths) {
-    try {
-      if (fs.statSync(dirPath).isDirectory()) {
-        console.log(`start setFolderIcon for ${dirPath}`);
-        await setFolderIcon(dirPath);
-        console.log(`end setFolderIcon for ${dirPath}`);
-      }
-    } catch (error: any) {
-      console.error(
-        `Failed to process directory ${dirPath}\nError: ${error.message}`
-      );
-    }
-  }
+  Promise.all(
+    dirPaths.map(
+      (dirPath) =>
+        new Promise<void>((resolve) => {
+          if (!fs.statSync(dirPath).isDirectory()) {
+            console.log(`${dirPath} is not a directory.`);
+            resolve();
+            return;
+          }
+
+          console.log(`start setFolderIcon for ${dirPath}`);
+          setFolderIcon(dirPath)
+            .then(() => {
+              console.log(`end setFolderIcon for ${dirPath}`);
+              resolve();
+            })
+            .catch((error: any) => {
+              console.error(
+                `Failed to process directory ${dirPath}\nError: ${error.message}`
+              );
+              resolve();
+            });
+        })
+    )
+  ).then(() => console.log('All done!'));
 }
 
 main();
