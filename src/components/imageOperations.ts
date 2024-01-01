@@ -23,7 +23,7 @@ async function copyJpgAsPng(jpgPath: string, outputDirPath: string): Promise<str
 async function convertImgToSquare(pngPath: string): Promise<void> {
   const image = await Jimp.read(pngPath);
   const size = Math.max(image.bitmap.width, image.bitmap.height);
-  const newImage = new Jimp(size, size, 0x000000ff);
+  const newImage = new Jimp(size, size, 0x00000000);
   const x = (size - image.bitmap.width) / 2;
   const y = (size - image.bitmap.height) / 2;
   newImage.composite(image, x, y);

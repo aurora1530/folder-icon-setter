@@ -95,17 +95,31 @@ async function setFolderIcon(dirPath: string): Promise<void> {
 
 async function main(): Promise<void> {
   const dirPaths = process.argv.slice(2);
-  for (const dirPath of dirPaths) {
-    try {
-      if (fs.statSync(dirPath).isDirectory()) {
-        console.log(`start setFolderIcon for ${dirPath}`);
-        await setFolderIcon(dirPath);
-        console.log(`end setFolderIcon for ${dirPath}`);
-      }
-    } catch (error: any) {
-      console.error(`Failed to process directory ${dirPath}\nError: ${error.message}`);
-    }
-  }
+  Promise.all(
+    dirPaths.map(
+      (dirPath) =>
+        new Promise<void>((resolve) => {
+          if (!fs.statSync(dirPath).isDirectory()) {
+            console.log(`${dirPath} is not a directory.`);
+            resolve();
+            return;
+          }
+
+          console.log(`start setFolderIcon for ${dirPath}`);
+          setFolderIcon(dirPath)
+            .then(() => {
+              console.log(`end setFolderIcon for ${dirPath}`);
+              resolve();
+            })
+            .catch((error: any) => {
+              console.error(
+                `Failed to process directory ${dirPath}\nError: ${error.message}`
+              );
+              resolve();
+            });
+        })
+    )
+  ).then(() => console.log('All done!'));
 }
 
 main();
