@@ -1,5 +1,5 @@
-import Jimp from "jimp";
-import path from "path";
+import Jimp from 'jimp';
+import path from 'path';
 
 /**
  * Converts a JPG image to PNG format.
@@ -7,13 +7,10 @@ import path from "path";
  * @param {string} outputDirPath - The path of the output directory.
  * @returns {Promise<string>} The path of the converted PNG image file.
  */
-async function copyJpgAsPng(
-  jpgPath: string,
-  outputDirPath: string
-): Promise<string> {
+async function copyJpgAsPng(jpgPath: string, outputDirPath: string): Promise<string> {
   const img = await Jimp.read(jpgPath);
-  const outputFilename = path.basename(jpgPath).replace(/\.jpe?g$/i, ".png");
-  const pngPath = outputDirPath + "\\" + outputFilename;
+  const outputFilename = path.basename(jpgPath).replace(/\.jpe?g$/i, '.png');
+  const pngPath = outputDirPath + '\\' + outputFilename;
   await img.writeAsync(pngPath);
   return pngPath;
 }

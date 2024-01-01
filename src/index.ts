@@ -1,23 +1,23 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 import {
   makeIconDir,
   getFirstFileNameOfSortedDir,
   copyFile,
-} from "./components/fileOperations";
+} from './components/fileOperations';
 import {
   copyJpgAsPng,
   convertImgToSquare,
   createResizedSquareImages,
-} from "./components/imageOperations";
+} from './components/imageOperations';
 import {
   createIcoFromPngImgs,
   updateIconResourceOfDesktopIni,
-} from "./components/iconOperations";
-import { execCommand } from "./components/commandOperations";
+} from './components/iconOperations';
+import { execCommand } from './components/commandOperations';
 
 function convertRelativeToAbsolutePath(dirPath: string): string {
-  if (dirPath.startsWith("./")) dirPath = dirPath.replace("./", "");
+  if (dirPath.startsWith('./')) dirPath = dirPath.replace('./', '');
   if (!path.isAbsolute(dirPath)) dirPath = path.resolve(dirPath);
   return dirPath;
 }
@@ -36,10 +36,7 @@ async function createCopiedIconTargetImg(
       `${iconDirPath}\\${iconTargetFileName}`
     );
   } else {
-    copiedIconTargetFilePath = await copyJpgAsPng(
-      iconTargetFilePath,
-      iconDirPath
-    );
+    copiedIconTargetFilePath = await copyJpgAsPng(iconTargetFilePath, iconDirPath);
   }
 
   await convertImgToSquare(copiedIconTargetFilePath);
@@ -54,7 +51,7 @@ async function createIcon(
     copiedIconTargetFilePath,
     iconDirPath
   );
-  const iconPath = iconDirPath + "\\" + "icon.ico";
+  const iconPath = iconDirPath + '\\' + 'icon.ico';
   await createIcoFromPngImgs(resizedPngPathArray, iconPath);
   return { iconPath, resizedPngPathArray };
 }
@@ -106,9 +103,7 @@ async function main(): Promise<void> {
         console.log(`end setFolderIcon for ${dirPath}`);
       }
     } catch (error: any) {
-      console.error(
-        `Failed to process directory ${dirPath}\nError: ${error.message}`
-      );
+      console.error(`Failed to process directory ${dirPath}\nError: ${error.message}`);
     }
   }
 }

@@ -1,5 +1,5 @@
-import pngToIco from "png-to-ico";
-import fs from "fs";
+import pngToIco from 'png-to-ico';
+import fs from 'fs';
 
 /**
  * Converts a PNG image to an ICO file.
@@ -21,7 +21,7 @@ async function createIcoFromPngImgs(
 }
 
 function changePathToWindowsStyle(path: string): string {
-  return path.replace(/\//g, "\\");
+  return path.replace(/\//g, '\\');
 }
 
 /**
@@ -30,10 +30,7 @@ function changePathToWindowsStyle(path: string): string {
  * @param {string} iconPath - The path to the icon file.
  * @returns {void}
  */
-function updateIconResourceOfDesktopIni(
-  iniPath: string,
-  iconPath: string
-): void {
+function updateIconResourceOfDesktopIni(iniPath: string, iconPath: string): void {
   iconPath = changePathToWindowsStyle(iconPath);
   if (!fs.existsSync(iniPath)) {
     const iniContent = `[.ShellClassInfo]
@@ -43,14 +40,14 @@ Mode=
 Vid=
 FolderType=Generic
 `;
-    fs.writeFileSync(iniPath, iniContent, "utf-8");
+    fs.writeFileSync(iniPath, iniContent, 'utf-8');
   } else {
-    let iniContent = fs.readFileSync(iniPath, "utf-8");
-    if (!iniContent.includes("[.ShellClassInfo]")) {
+    let iniContent = fs.readFileSync(iniPath, 'utf-8');
+    if (!iniContent.includes('[.ShellClassInfo]')) {
       iniContent += `\r\n[.ShellClassInfo]\r\nIconResource=${iconPath},0\r\n`;
-    } else if (!iniContent.includes("IconResource=")) {
+    } else if (!iniContent.includes('IconResource=')) {
       iniContent = iniContent.replace(
-        "[.ShellClassInfo]",
+        '[.ShellClassInfo]',
         `[.ShellClassInfo]\nIconResource=${iconPath},0\r\n`
       );
     } else {
@@ -60,12 +57,11 @@ FolderType=Generic
       );
     }
 
-    if (!iniContent.includes("[ViewState]")) {
-      iniContent +=
-        "\r\n[ViewState]\r\nMode=\r\nVid=\r\nFolderType=Generic\r\n";
+    if (!iniContent.includes('[ViewState]')) {
+      iniContent += '\r\n[ViewState]\r\nMode=\r\nVid=\r\nFolderType=Generic\r\n';
     }
 
-    fs.writeFileSync(iniPath, iniContent, "utf-8");
+    fs.writeFileSync(iniPath, iniContent, 'utf-8');
   }
 }
 
